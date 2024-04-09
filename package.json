@@ -14,6 +14,8 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "@amap/amap-jsapi-loader": "^1.0.1",
+    "element-ui": "^2.15.14",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"
   },
@@ -73,7 +75,8 @@
     "webpack": "^3.6.0",
     "webpack-bundle-analyzer": "^2.9.0",
     "webpack-dev-server": "^2.9.1",
-    "webpack-merge": "^4.1.0"
+    "webpack-merge": "^4.1.0",
+    "xlsx": "^0.18.5"
   },
   "engines": {
     "node": ">= 6.0.0",
