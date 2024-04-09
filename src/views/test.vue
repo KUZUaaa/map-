@@ -40,7 +40,8 @@
     <el-dialog
           title="修改点位"
           :visible.sync="dialogVisible"
-          width="30%">
+          width="30%"
+          @close="pasterMap">
           <el-form>
                     <el-form-item label="经度">
                               <el-input v-model="pointsList[doingIndex].x"></el-input>
@@ -67,7 +68,7 @@ export default {
       allData: [], //全部频率
       allDataStr:'',
       restData: [], //剩余频率
-      pointsList: [{x:'0',y:'0',v:''}], //全部点位
+      pointsList: [{x:'116.3912757',y:'39.906217',v:''}], //全部点位
       dialogVisible: false,
       doingIndex:0,
     };
@@ -79,6 +80,14 @@ export default {
   },
   unmounted() {
     this.map.destroy();
+  },
+  watch:{
+          allData:{
+                    handler(newValue, oldValue){
+                              this.pasterMap()
+                    },
+                    deep: true
+          }
   },
   methods: {
     initAMap() {
@@ -136,15 +145,44 @@ export default {
     },
     //添加点位
     handleAdd(){
-          this.pointsList.push({x:'0',y:'0',v:''})
+          this.pointsList.push({x:'116.3912757',y:'39.906217',v:''})
           console.log(this.pointsList);
+          this.pasterMap()
     },
     handleEdit(row,index){
           this.dialogVisible = true;
           this.doingIndex = index;
+          
     },
     handleDel(){
-          this.pointsList.splice(this.doingIndex,1);
+          this.pointsList.splice(this.doingIndex+1,1);
+          this.pasterMap()
+    },
+    pasterMap(){    
+          var radius = 5//圈半径
+          let centers = this.pointsList.map(item=>{
+                return new AMap.LngLat(item.x,item.y)
+          })
+          let circleMarkers = []
+          centers.forEach(center=>{
+                    circleMarkers.push(
+                              new AMap.CircleMarker({
+                                        center: center, //圆心
+                                        radius: radius, //半径
+                                        strokeColor: "white", //轮廓线颜色
+                                        strokeWeight: 2, //轮廓线宽度
+                                        strokeOpacity: 0.5, //轮廓线透明度
+                                        fillColor: "rgba(0,0,255,1)", //多边形填充颜色
+                                        fillOpacity: 0.5, //多边形填充透明度
+                                        zIndex: 10, //多边形覆盖物的叠加顺序
+                                        cursor: "pointer", //鼠标悬停时的鼠标样式
+                              })
+                    )
+          })
+          circleMarkers.forEach(circleMarker=>{
+                    this.map.add(circleMarker);
+                    this.map.setFitView([circleMarker]);
+          })
     },
   },
 };
