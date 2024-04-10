@@ -16,6 +16,8 @@
   "dependencies": {
     "@amap/amap-jsapi-loader": "^1.0.1",
     "element-ui": "^2.15.14",
+    "file-saver": "^2.0.5",
+    "html-webpack-inline-plugin": "^0.0.4",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"
   },
