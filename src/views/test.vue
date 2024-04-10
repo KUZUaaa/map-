@@ -2,8 +2,8 @@
   <div class="main">
     <div class="left">
       <div id="container"></div>
-      <div>
-        <el-form inline>
+      <div style="margin-top: 10px">
+        <el-form inline >
           <el-form-item label="当前定位经度">
             <el-input v-model="x"></el-input>
           </el-form-item>
@@ -20,7 +20,7 @@
         
       </div>
     </div>
-    <div class="right">
+    <div class="right" style="padding: 10px">
       <div class="topBtn">
         <input
           id="file-input"
@@ -35,18 +35,26 @@
       </div>
       <el-table :data="pointsList" style="width: 100%; margin-top: 60px">
         <el-table-column type="index"> </el-table-column>
-        <el-table-column prop="x" label="经度" width="180"> </el-table-column>
-        <el-table-column prop="y" label="维度" width="180"> </el-table-column>
+        <el-table-column prop="x" label="经度" width="180"> 
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.x" @change="pasterMap"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column prop="y" label="维度" width="180">
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.y" @change="pasterMap"></el-input>
+          </template>
+        </el-table-column>
         <el-table-column prop="v" label="频率">
           <template slot-scope="scope">
-            {{ scope.row.v ? scope.row.v : "-" }}
+            <el-input v-model="scope.row.v" @change="pasterMap"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button size="mini" @click="handleEdit(scope.row, scope.$index)"
+            <!-- <el-button size="mini" @click="handleEdit(scope.row, scope.$index)"
               >编辑</el-button
-            >
+            > -->
             <el-button size="mini" @click="handleDel(scope.row, scope.$index)"
               >删除</el-button
             >
@@ -206,6 +214,7 @@ export default {
       });
       this.map.add(this.circlePoints);
       this.map.setFitView([this.circlePoints]);
+      
       this.compare();
     },
     // 计算剩余频率
@@ -286,14 +295,17 @@ export default {
       this.circleMarkers.forEach((circleMarker) => {
         this.map.remove(circleMarker);
       });
-
       this.pointsList.forEach(item=>{
         console.log(item.v,this.allData);
         item.v.split(',').forEach(v=>{
           if(this.allData.indexOf(v)==-1) {
-          this.allData.push(v)
+            if(v){
+              this.allData.push(v)
+            }
+         
         }
         })
+        console.log('111',this.allData);
         this.allDataStr = this.allData.join(",");
       })
       this.circleMarker = [];
