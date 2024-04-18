@@ -109,6 +109,7 @@ export default {
       doingIndex: 0,
       circleMarkers: [], //点位图像数组
       circlePoints: "", //圆圈对象
+      circleEditor:'',
       x: 116.433322,
       y: 39.900255,
       r: 50000,
@@ -191,6 +192,11 @@ export default {
         });
     },
     drawCircle() {
+      let that = this
+      
+      if(that.circleEditor){
+        that.circleEditor.close();
+      }
       this.map.remove(this.circlePoints);
       //设置圆形位置
       var center = new AMap.LngLat(
@@ -214,6 +220,13 @@ export default {
       });
       this.map.add(this.circlePoints);
       this.map.setFitView([this.circlePoints]);
+      
+      this.map.plugin(["AMap.CircleEditor"], function () {
+        //实例化圆形编辑器，传入地图实例和要进行编辑的圆形实例
+        that.circleEditor = new AMap.CircleEditor(that.map, that.circlePoints,{resizePoint:{'display':'none'}});
+        //开启编辑模式
+        that.circleEditor.open();
+      });
       
       this.compare();
     },
