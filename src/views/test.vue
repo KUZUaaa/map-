@@ -3,25 +3,7 @@
     <div class="left">
       <div id="container"></div>
       <div style="margin-top: 10px">
-        <el-form inline >
-          <el-form-item label="当前定位经度">
-            <el-input v-model="x"></el-input>
-          </el-form-item>
-          <el-form-item label="当前定位纬度">
-            <el-input v-model="y"></el-input>
-          </el-form-item>
-          <el-form-item label="当前定位半径">
-            <el-input v-model="r"></el-input>
-          </el-form-item>
-        </el-form>
-        <span>剩余可用频率：</span>
-        <div v-for="item,index in restDataRe" :key="index">{{ item.join(",") }}</div>
-        <!-- <div> {{ restData.length ? restData.join(",") : "-" }}</div> -->
-        
-      </div>
-    </div>
-    <div class="right" style="padding: 10px">
-      <div class="topBtn">
+        <div class="topBtn">
         <input
           id="file-input"
           type="file"
@@ -33,8 +15,13 @@
           >导出</el-button
         >
       </div>
-      <el-table :data="pointsList" style="width: 100%; margin-top: 60px">
+      <el-table :data="pointsList" style="width: 100%;">
         <el-table-column type="index"> </el-table-column>
+        <el-table-column prop="name" label="名称" width="180"> 
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.name" ></el-input>
+          </template>
+        </el-table-column>
         <el-table-column prop="x" label="经度" width="180"> 
           <template slot-scope="scope">
             <el-input v-model="scope.row.x" @change="pasterMap"></el-input>
@@ -45,7 +32,7 @@
             <el-input v-model="scope.row.y" @change="pasterMap"></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="v" label="频率">
+        <el-table-column prop="v" label="频率" width="180">
           <template slot-scope="scope">
             <el-input v-model="scope.row.v" @change="pasterMap"></el-input>
           </template>
@@ -71,6 +58,25 @@
           ></el-input>
         </el-form-item>
       </el-form>
+        
+        
+      </div>
+    </div>
+    <div class="right" style="padding: 10px">
+      <el-form inline >
+          <el-form-item label="当前定位经度">
+            <el-input v-model="x"></el-input>
+          </el-form-item>
+          <el-form-item label="当前定位纬度">
+            <el-input v-model="y"></el-input>
+          </el-form-item>
+          <el-form-item label="当前定位半径">
+            <el-input v-model="r"></el-input>
+          </el-form-item>
+        </el-form>
+        <span>剩余可用频率：</span>
+        <div v-for="item,index in restDataRe" :key="index">{{ item.join(",") }}</div>
+        <!-- <div> {{ restData.length ? restData.join(",") : "-" }}</div> -->
     </div>
     <el-dialog
       title="修改点位"
@@ -219,7 +225,7 @@ export default {
         zIndex: 50, //圆形的叠加顺序
       });
       this.map.add(this.circlePoints);
-      this.map.setFitView([this.circlePoints]);
+      //this.map.setFitView([this.circlePoints]);
       
       this.map.plugin(["AMap.CircleEditor"], function () {
         //实例化圆形编辑器，传入地图实例和要进行编辑的圆形实例
@@ -269,8 +275,10 @@ export default {
             that.restData = that.allData;
             that.pointsList = arr[0].split(",").map((item) => {
               let data = item.split(":");
-              let xyData = data[0].split("&");
+              let name = data[0].split('@')[0]
+              let xyData = data[0].split('@')[1].split("&");
               return {
+                name:name,
                 x: xyData[0],
                 y: xyData[1],
                 v: data[1],
@@ -354,9 +362,9 @@ export default {
       var data = "";
       this.pointsList.forEach((item, index) => {
         if (index + 1 < this.pointsList.length) {
-          data += `${item.x} ${item.y}:${item.v.replaceAll(",", " ")},\n`;
+          data += `${item.name}@${item.x} ${item.y}:${item.v.replaceAll(",", " ")},\n`;
         } else {
-          data += `${item.x} ${item.y}:${item.v.replaceAll(",", " ")}\n`;
+          data += `${item.name}@${item.x} ${item.y}:${item.v.replaceAll(",", " ")}\n`;
         }
       });
       data += "/\n";
